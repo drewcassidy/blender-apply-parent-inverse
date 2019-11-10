@@ -6,3 +6,6 @@ Currently 2.79 only, 2.80 version will come when I start using 2.80, or if enoug
 
 ## Installation
 To install, simply clone or copy this repository into your blender `addons` folder and enable it in the preferences like any other plugin.
+
+## Usage
+This plugin adds a single item called "Apply Parent Inverse" to the Object menu. By default, this action is bound to `⇧-⌥-P` (`⇧-alt-P` on windows and linux)
