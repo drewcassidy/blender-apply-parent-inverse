@@ -28,27 +28,31 @@ class ApplyParentInverse(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):  # execute() is called when running the operator
-        scene = context.scene
-        for obj in scene.objects:
-            # code from https://blender.stackexchange.com/a/28897
+        obj = context.active_object
 
-            # store a copy of the objects final transformation
-            # so we can read from it later.
-            ob_matrix_orig = obj.matrix_world.copy()
+        # code from https://blender.stackexchange.com/a/28897
 
-            # reset parent inverse matrix
-            # (relationship created when parenting)
-            obj.matrix_parent_inverse.identity()
+        # store a copy of the objects final transformation
+        # so we can read from it later.
+        ob_matrix_orig = obj.matrix_world.copy()
 
-            # re-apply the difference between parent/child
-            # (this writes directly into the loc/scale/rot) via a matrix.
-            obj.matrix_basis = obj.parent.matrix_world.inverted() * ob_matrix_orig
+        # reset parent inverse matrix
+        # (relationship created when parenting)
+        obj.matrix_parent_inverse.identity()
+
+        # re-apply the difference between parent/child
+        # (this writes directly into the loc/scale/rot) via a matrix.
+        obj.matrix_basis = obj.parent.matrix_world.inverted() * ob_matrix_orig
 
         return {'FINISHED'}  # Lets Blender know the operator finished successfully.
 
 
 def menu_func(self, context):
     self.layout.operator(ApplyParentInverse.bl_idname)
+
+
+# store keymaps here to access after registration
+addon_keymaps = []
 
 
 def register():
