@@ -30,6 +30,8 @@ class ApplyParentInverse(bpy.types.Operator):
     def execute(self, context):  # execute() is called when running the operator
         scene = context.scene
         for obj in scene.objects:
+            # code from https://blender.stackexchange.com/a/28897
+
             # store a copy of the objects final transformation
             # so we can read from it later.
             ob_matrix_orig = obj.matrix_world.copy()
