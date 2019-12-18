@@ -2,7 +2,7 @@
 
 A plugin to reset blender's parent inverse antifeature without breaking everything. Thanks to [ideasman42 on StackExchange](https://blender.stackexchange.com/a/28897/83714) for the code that makes this possible.
 
-Currently 2.79 only, 2.80 version will come when I start using 2.80, or if enough people want it.
+Available for either Blender 2.79 or Blender 2.80 and above, in the `Blender-2.79` and `Blender-2.80` branches respectively
 
 ## Installation
 To install, simply clone or copy this repository into your blender `addons` folder and enable it in the preferences like any other plugin.

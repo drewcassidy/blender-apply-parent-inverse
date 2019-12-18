@@ -15,13 +15,13 @@ import bpy
 bl_info = {
     "name": "Apply Parent Inverse",
     "author": "Andrew Cassidy",
-    "blender": (2, 7, 0),
+    "blender": (2, 80, 0),
     "description": "Apply parent inverse without moving objects around",
     "category": "Object"
 }
 
 
-class ApplyParentInverse(bpy.types.Operator):
+class OBJECT_OT_apply_parent_inverse(bpy.types.Operator):
     """Apply Parent Inverse"""
     bl_idname = "object.parent_apply"
     bl_label = "Apply Parent Inverse"
@@ -42,13 +42,13 @@ class ApplyParentInverse(bpy.types.Operator):
 
         # re-apply the difference between parent/child
         # (this writes directly into the loc/scale/rot) via a matrix.
-        obj.matrix_basis = obj.parent.matrix_world.inverted() * ob_matrix_orig
+        obj.matrix_basis = obj.parent.matrix_world.inverted() @ ob_matrix_orig
 
         return {'FINISHED'}  # Lets Blender know the operator finished successfully.
 
 
 def menu_func(self, context):
-    self.layout.operator(ApplyParentInverse.bl_idname)
+    self.layout.operator(OBJECT_OT_apply_parent_inverse.bl_idname)
 
 
 # store keymaps here to access after registration
@@ -56,7 +56,7 @@ addon_keymaps = []
 
 
 def register():
-    bpy.utils.register_class(ApplyParentInverse)
+    bpy.utils.register_class(OBJECT_OT_apply_parent_inverse)
     bpy.types.VIEW3D_MT_object.append(menu_func)
 
     # handle the keymap
@@ -66,7 +66,7 @@ def register():
     kc = wm.keyconfigs.addon
     if kc:
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
-        kmi = km.keymap_items.new(ApplyParentInverse.bl_idname, 'P', 'PRESS', ctrl=False, shift=True, alt=True)
+        kmi = km.keymap_items.new(OBJECT_OT_apply_parent_inverse.bl_idname, 'P', 'PRESS', ctrl=False, shift=True, alt=True)
         addon_keymaps.append((km, kmi))
 
 
@@ -78,7 +78,7 @@ def unregister():
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
 
-    bpy.utils.unregister_class(ApplyParentInverse)
+    bpy.utils.unregister_class(OBJECT_OT_apply_parent_inverse)
     bpy.types.VIEW3D_MT_object.remove(menu_func)
 
 
