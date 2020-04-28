@@ -125,7 +125,7 @@ def unregister():
 	for c in classes:
 		bpy.utils.unregister_class(c)
 
-	bpy.types.VIEW3D_MT_object.remove(menu_func)
+	bpy.types.VIEW3D_MT_object_parent.remove(menu_func)
 
 	# Note: when unregistering, it's usually good practice to do it in reverse order you registered.
 	# Can avoid strange issues like keymap still referring to operators already unregistered...
