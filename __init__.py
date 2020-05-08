@@ -17,7 +17,8 @@ bl_info = {
     "author": "Andrew Cassidy",
     "blender": (2, 80, 0),
     "description": "Apply parent inverse without moving objects around",
-    "category": "Object"
+    "category": "Object",
+    "location": "3D View: Object -> Apply Parent Inverse, Set Parent Without Inverse"
 }
 
 
@@ -29,26 +30,57 @@ class OBJECT_OT_apply_parent_inverse(bpy.types.Operator):
 
     def execute(self, context):  # execute() is called when running the operator
         obj = context.active_object
-
-        # code from https://blender.stackexchange.com/a/28897
-
-        # store a copy of the objects final transformation
-        # so we can read from it later.
-        ob_matrix_orig = obj.matrix_world.copy()
-
-        # reset parent inverse matrix
-        # (relationship created when parenting)
-        obj.matrix_parent_inverse.identity()
-
-        # re-apply the difference between parent/child
-        # (this writes directly into the loc/scale/rot) via a matrix.
-        obj.matrix_basis = obj.parent.matrix_world.inverted() @ ob_matrix_orig
+        
+        # generate a warning, if the object has no parent
+        if not obj.parent:
+            self.report({'ERROR'}, 'Object is not a child, therefore has no inverse transform')
+            return {'FINISHED'}
+            
+        apply_parent_inverse(obj) # apply the inverse parent of the selected object
 
         return {'FINISHED'}  # Lets Blender know the operator finished successfully.
 
 
+class OBJECT_OT_parent_without_inverse(bpy.types.Operator):
+    """Set Parent Without Inverse"""
+    bl_idname = "object.parent_without_inverse"
+    bl_label = "Set Parent Without Inverse"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        
+        # set the parent with "keep transform" option, therefore creating a inverse parent tranform
+        bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
+        
+        # clear the created inverse parent transform of the children
+        for child in context.selected_objects:  # loop all selected objects
+            if child is not context.active_object:  # ignore the active object, because it is the parent
+                apply_parent_inverse(child)  # apply the inverse parent transform of the child
+        
+        return {'FINISHED'}
+
+
+def apply_parent_inverse(obj):
+    
+    # code from https://blender.stackexchange.com/a/28897
+
+    # store a copy of the objects final transformation
+    # so we can read from it later.
+    ob_matrix_orig = obj.matrix_world.copy()
+
+    # reset parent inverse matrix
+    # (relationship created when parenting)
+    obj.matrix_parent_inverse.identity()
+
+    # re-apply the difference between parent/child
+    # (this writes directly into the loc/scale/rot) via a matrix.
+    obj.matrix_basis = obj.parent.matrix_world.inverted() @ ob_matrix_orig
+
+
 def menu_func(self, context):
+    self.layout.separator()
     self.layout.operator(OBJECT_OT_apply_parent_inverse.bl_idname)
+    self.layout.operator(OBJECT_OT_parent_without_inverse.bl_idname)
 
 
 # store keymaps here to access after registration
@@ -57,6 +89,7 @@ addon_keymaps = []
 
 def register():
     bpy.utils.register_class(OBJECT_OT_apply_parent_inverse)
+    bpy.utils.register_class(OBJECT_OT_parent_without_inverse)
     bpy.types.VIEW3D_MT_object.append(menu_func)
 
     # handle the keymap
@@ -78,6 +111,7 @@ def unregister():
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
 
+    bpy.utils.unregister_class(OBJECT_OT_parent_without_inverse)
     bpy.utils.unregister_class(OBJECT_OT_apply_parent_inverse)
     bpy.types.VIEW3D_MT_object.remove(menu_func)
 
