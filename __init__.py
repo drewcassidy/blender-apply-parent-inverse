@@ -90,8 +90,7 @@ addon_keymaps = []
 def register():
     bpy.utils.register_class(OBJECT_OT_apply_parent_inverse)
     bpy.utils.register_class(OBJECT_OT_parent_without_inverse)
-    bpy.types.VIEW3D_MT_object.append(menu_func)
-
+    bpy.types.VIEW3D_MT_object_parent.append(menu_func)
     # handle the keymap
     wm = bpy.context.window_manager
     # Note that in background mode (no GUI available), keyconfigs are not available either,
