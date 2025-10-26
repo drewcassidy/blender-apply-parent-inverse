@@ -1,3 +1,6 @@
+> [!IMPORTANT] 
+> Migrated to https://git.offworldcolonies.nexus/drewcassidy/blender-apply-parent-inverse
+
 # blender-apply-parent-inverse
 
 A plugin to reset blender's parent inverse antifeature without breaking everything. Thanks to [ideasman42 on StackExchange](https://blender.stackexchange.com/a/28897/83714) for the code that makes this possible.
